@@ -38,6 +38,7 @@ const ext_type = {
   ':VXD': 'hex',
   ':HHELP': 'hex',
   ':MP4': 'hex',
+  ':EBML': 'hex',
   ':WAV': 'hex',
   ':SMF': 'hex',
   ':RIFF': 'hex',
