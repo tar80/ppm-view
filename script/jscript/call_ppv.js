@@ -109,6 +109,14 @@ var susie_ext = function () {
   return ext.match(reg) || '';
 };
 
+var array_match = function (arr, target) {
+  for (var i = 0, l = arr.length; i < l; i++) {
+    if (arr[i] === target) {
+      return true;
+    }
+  }
+};
+
 var arr_cmd = {
   hex: function () {
     return ['*ppv', boot_id, '-hex', '"' + target_file.name + '"'];
@@ -169,7 +177,7 @@ var cmd_line = function (v) {
 
       return cmd_line(viewer);
     } else {
-      if (type !== 'image' && ~susie_ext().indexOf('*.' + ext.substring(1).toLowerCase())) {
+      if (type !== 'image' && array_match(susie_ext(), '*.' + ext.substring(1).toLowerCase())) {
         type = 'image';
       }
 

@@ -106,7 +106,7 @@ const susie_ext = () => {
   const ext = PPx.Extract('%*getcust(P_susie)').toLowerCase();
   const reg = /\*\.\w+/gm;
 
-  return ext.match(reg) || '';
+  return ext.match(reg) || [''];
 };
 
 const arr_cmd = {
@@ -186,7 +186,6 @@ const exec_ppv = (command) => {
 
   changePosition && PPx.Execute(`*customize X_vpos=${newpos}`);
   PPx.Execute(command);
-  // PPx.Execute(command + '%&');
   changePosition && PPx.Execute(`*setcust X_vpos=${savepos}`);
 };
 
