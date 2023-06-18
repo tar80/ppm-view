@@ -1,13 +1,13 @@
 ﻿PPM_PLUGIN_NAME=ppm-view
 
 #Plugin version
-VERSION=1.0
+VERSION=1.1
 
 #Requires ppm version
 PPM_VERSION=0.89
 
 #Requires PPx version
-PPX_VERSION=19101
+PPX_VERSION=19102
 
 #Requires PPx Script Module version
 SCRIPT_VERSION=19
