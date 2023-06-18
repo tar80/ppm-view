@@ -27,7 +27,6 @@ PPvの閲覧機能を強化します。
 
 	list\HMppvDoc.cfg	ページ・キャレットモードの隠しメニュー
 	list\HMppvImg.cfg	画像モードの隠しメニュー
-	script\auto_adjust.js	自動位置調整用のLOADEVENT、CLOSEEVENTを設定
 	script\busy_ppv.js	自動位置調整
 	script\call_ppv.js	自動判別PPv呼び出し(構文ハイライトなど)
 	script\cursor_word.js	カーソル下単語の取得
@@ -35,6 +34,7 @@ PPvの閲覧機能を強化します。
 	script\restore_ppv	起動前のPPvの位置情報を復元
 	script\select_text.js	スペース区切り文字列の取得
 	script\set_bg.js	PPvに背景画像を設定
+	script\set_busy.js	自動位置調整用のLOADEVENT、CLOSEEVENTを設定
 	script\sync_view.js	連動ビューPPvの呼び出し
 
 ===============================================================================
@@ -50,7 +50,7 @@ PPvの閲覧機能を強化します。
 	*ppmVsync	非連動ビューPPvでも擬似的にPPcと連動する
 
 ===============================================================================
-デフォルトキー設定
+デフォルトキー設定 ※()で括られたキーはコメントアウト
 
 	PPc
 		N		新規PPv起動
@@ -76,18 +76,18 @@ PPvの閲覧機能を強化します。
 		CTRL+T		最全面表示トグル
 		CTRL+S		閲覧中のファイルを保存
 		CTRL+SHIFT+D	閲覧中のファイルを削除(safedelete)
-		CTRL+Z		ファイル操作のアンドゥ
+		(CTRL+Z)	ファイル操作のアンドゥ
 		CTRL+F5		構文ハイライト再読み込み
 		CTRL+SHIFT+UP	前のファイルを構文ハイライト付きで開く
 		CTRL+SHIFT+DOWN	次のファイルを構文ハイライト付きで開く
 	PPv(ViLikeKeys)
-		:		コマンド一行編集
-		HJKL		左上下右移動
-		G		ファイル頭に移動
-		SHIFT+G		ファイル末に移動
-		CTRL+G		行ジャンプ
-		N		次の検索候補
-		SHIFT+N		前の検索候補
+		(:)		コマンド一行編集
+		(HJKL)		左上下右移動
+		(G)		ファイル頭に移動
+		(SHIFT+G)	ファイル末に移動
+		(CTRL+G)	行ジャンプ
+		(N)		次の検索候補
+		(SHIFT+N)	前の検索候補
 
 ===============================================================================
 vim:tw=79:ts=8:sts=0:sw=4:norl:noet:fen:
