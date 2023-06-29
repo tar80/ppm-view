@@ -4,7 +4,7 @@
  *
  * @param {string} 0 PPv ID
  * @param {number} 1 PPv XV_tmod
- * @param {number} 2 8-digit numbeer
+ * @param {number} 2 8-digit number
  * @param {array} 3 PPv window positions
  */
 
