@@ -15,7 +15,7 @@
 
 // have the ppm-listfile
 if (PPx.DirectoryType == 4 && PPx.Extract('%*getcust(S_ppm#plugins:ppm-listfile)') !== '') {
-  PPx.Execute('*script %*getcust(S_ppm#plugins:ppm-listfile)\\script\\ecma\\lf_execute.js,ppv');
+  PPx.Execute('*script %*getcust(S_ppm#plugins:ppm-listfile)\\script\\%*getcust(S_ppm#global:scrypttype)\\lf_execute.js,ppv');
   PPx.Quit(1);
 }
 
