@@ -155,7 +155,7 @@ const cmd_line = (v = viewer) => {
   } else {
     if (type === 'link') {
       filepath = PPx.Extract(`%*linkedpath(${filepath})`);
-      parent_dir = PPx.Extract(`%*name(D,"${filepath}")`);
+      parent_dir = PPx.Extract(`%*name(DN,"${filepath}")`);
       file_name = filepath.slice(parent_dir.length + 1);
       file_ext = PPx.Extract(`%*name(T,"${file_name}")`);
       viewer.bat = 2;
@@ -203,7 +203,7 @@ const boot_id = ((id = viewer.id) => {
   return `-r -bootid:${id.slice(-1)}`;
 })();
 
-let parent_dir = PPx.Extract('%FD');
+let parent_dir = PPx.Extract('%FDN');
 let [file_name, file_ext] = ((reload = viewer.reload) => {
   let y, t, name;
 

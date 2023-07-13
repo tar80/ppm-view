@@ -170,7 +170,7 @@ var cmd_line = function (v) {
   } else {
     if (type === 'link') {
       filepath = PPx.Extract('%*linkedpath(' + filepath + ')');
-      parent_dir = PPx.Extract('%*name(D,"' + filepath + '")');
+      parent_dir = PPx.Extract('%*name(DN,"' + filepath + '")');
       target_file.name = filepath.slice(parent_dir.length + 1);
       target_file.ext = PPx.Extract('%*name(T,"' + target_file.name + '")');
       viewer.bat = 2;
@@ -218,7 +218,7 @@ var boot_id = (function (id) {
   return '-r -bootid:' + id.slice(-1);
 })(viewer.id);
 
-var parent_dir = PPx.Extract('%FD');
+var parent_dir = PPx.Extract('%FDN');
 var target_file = (function (reload) {
   var y, t, name;
 
