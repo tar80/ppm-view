@@ -9,7 +9,7 @@ var full_path = PPx.Extract('%FDC');
 
 // If the file is an archive
 if (full_path === '') {
-  var parent_ext = PPx.getFileInformation(PPx.Extract('%FD'));
+  var parent_ext = PPx.getFileInformation(PPx.Extract('%FDN'));
 
   if (parent_ext === ':PKZIP' || parent_ext === ':RAR') {
     PPx.Execute('%"ppm-view"%Q"Delete the file from archive?"%:%u7-zip64.dll,d -hide %FD %FC');
