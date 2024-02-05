@@ -10,12 +10,12 @@
 
 'use strict';
 
-const [ppv_id, tmod, xwin, winpos] = [
+const [ppv_id, tmod, xwin] = [
   PPx.Arguments(0),
   PPx.Arguments(1),
   PPx.Arguments(2),
-  PPx.Arguments(3)
 ];
+const winpos = PPx.Arguments.length > 3 ? PPx.Arguments(3) : '';
 let i = 0;
 
 while (PPx.Extract(`%NV${ppv_id}`) !== '') {
@@ -26,7 +26,7 @@ while (PPx.Extract(`%NV${ppv_id}`) !== '') {
 }
 
 PPx.Execute(`*setcust X_win:V=B0${xwin}`);
-PPx.Execute(`*setcust _WinPos:V${ppv_id}=${winpos}`);
+winpos !== '' && PPx.Execute(`*setcust _WinPos:V${ppv_id}=${winpos}`);
 
 if (tmod !== '0') {
   PPx.Execute('*setcust XV_tmod=1');
