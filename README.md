@@ -10,4 +10,3 @@ PPvの設定集です。
 ```text
 remote 'tar80/ppm-view'
 ```
-

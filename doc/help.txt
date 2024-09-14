@@ -1,48 +1,59 @@
-Viewer
+PPv enhancements
 
 Author: tar80 <tar80master@google.com>
 License: MIT License
 Repository: https://github.com/tar80/ppm-view
 ===============================================================================
 
-PPvの閲覧機能を強化します。
+PPvの閲覧・操作を強化します。
 
+・PPvのプロセス毎にワーカスクリプトを常駐
 ・カーソル位置に合わせてPPvの位置を自動調整
-・PPvの挙動を動的に変更
-・窓数に合わせた連動ビューの制御
-・batを使ってPPvで構文ハイライト
-・ラップ・最全面・透明度のトグルキー
+・PPvの隠しメニュー・マウス操作を動的に変更
+・窓数に合わせた連動ビューの起動
+・Batを使って構文ハイライト
+・ラップ・最全面・透明度・背景画像のトグルキー
 ・ファイル内検索の強化
 ・履歴機能とブックマーク
-・パスを別PPvで開く
-・ViLikeKeys
+・しおり機能の数字キーへの割り当て
+・カーソル下のURIを抽出
+・指定範囲を選択
+・ViLikeKeys/カウンタ機能/Visual-mode
 
 ===============================================================================
 動作環境
 
-	PPx window module、PPx position module、PPx text moduleが必須。
+使用モジュール
+	PPx key module
+	PPx window module
+	PPx position module
+	PPx text module
 
 ===============================================================================
 構成ファイルの説明
 
-	list\HMppvDoc.cfg	ページ・キャレットモードの隠しメニュー
-	list\HMppvImg.cfg	画像モードの隠しメニュー
-	script\busy_ppv.js	自動位置調整
-	script\call_ppv.js	自動判別PPv呼び出し(構文ハイライトなど)
-	script\cursor_word.js	カーソル下単語の取得
-	script\delete_file.js	PPvで閲覧中のファイルを削除
-	script\restore_ppv	起動前のPPvの位置情報を復元
-	script\select_text.js	スペース区切り文字列の取得
-	script\set_bg.js	PPvに背景画像を設定
-	script\set_busy.js	自動位置調整用のLOADEVENT、CLOSEEVENTを設定
-	script\sync_view.js	連動ビューPPvの呼び出し
+	dist\actionUri.js		カーソル下のURIを抽出してコマンドに渡す
+	dist\deleteThis.js		閲覧中のファイルを削除
+		通常ファイルはSafeDeleteを実行
+		書庫内ファイルはzipのみ、7-zip64.dllを使って削除する
+	dist\extractCursorWord.js	カーソル下の単語を抽出
+	dist\findNext.js		検索語への単語単位カーソル移動
+	dist\findWord.js		*find強化版
+	dist\getSyntaxDocument		構文ハイライトの適用
+	dist\launchPPv.js		PPvを起動
+	dist\lazyRestore.js		連動ビュー終了後の遅延後処理
+	dist\openArchDoc.js		書庫内ドキュメントを列挙
+	dist\selectText.js		指定した範囲の文字列を選択
+	dist\syncView.js		連動ビューを制御
+	dist\toggleBgImg.js		背景画像をトグル
+	dist\workerPPv.stay.js		PPvのプロセスに常駐して操作を補助
 
 ===============================================================================
 テーブル情報
 
-	E_viewer	PPv用拡張子判別
+M_ppmViewRecent	閲覧履歴のリスト
 
-	M_ppmViewRecent	閲覧履歴リスト
+K_ppmViVG	オペレータGのキーバインド
 
 ===============================================================================
 ユーザーコマンド
@@ -53,38 +64,134 @@ PPvの閲覧機能を強化します。
 デフォルトキー設定 ※()で括られたキーはコメントアウト
 
 	PPc
-		N		新規PPv起動
+		N		ビューア拡張子判別
 		Y		連動ビュートグル
 
 	PPv
-		Y		連動ビュー終了
-		SHIFT+UP	疑似連動ビュー前のファイル
-		SHIFT+DOWN	疑似連動ビュー次のファイル
-		SHIFT+LFET	疑似連動ビュー左のファイル
-		SHIFT+RIGHT	疑似連動ビュー右のファイル
-		SPACE		疑似連動ビュー選択後、次のファイル
-		SHIFT+SPACE	疑似連動ビュー選択後、前のファイル
+		Y		連動ビュートグル
 		B		前方検索
 		F		後方検索
-		*		カーソル下単語検索
-		E		エディタ起動
+		[		単語単位前方検索
+		]		単語単位後方検索
+		@		書庫内ドキュメント閲覧
+		E		(画像)エディタ起動
 		SHIFT+E		PPe起動
 		0		閲覧履歴リスト
 		SHIFT+0		ブックマーク追加
 		F12		ラップ状態のトグル
 		CTRL+O		透明度二段階トグル
 		CTRL+T		最全面表示トグル
-		CTRL+S		閲覧中のファイルを保存
 		CTRL+SHIFT+D	閲覧中のファイルを削除(safedelete)
-		(CTRL+Z)	ファイル操作のアンドゥ
-		CTRL+F5		構文ハイライト再読み込み
+		(CTRL+Z)	ファイル操作のアンドゥ 要ppm-fileopration
+		F5		構文ハイライトを考慮して再読み込み
+		CTRL+F5		強制Bat出力読み込み
+		SHIFT+UP	疑似連動ビュー前のファイル
+		SHIFT+DOWN	疑似連動ビュー次のファイル
+		SHIFT+LFET	疑似連動ビュー左のファイル
+		SHIFT+RIGHT	疑似連動ビュー右のファイル
 		CTRL+SHIFT+UP	前のファイルを構文ハイライト付きで開く
 		CTRL+SHIFT+DOWN	次のファイルを構文ハイライト付きで開く
-	PPv(ViLikeKeys)
+		SPACE		疑似連動ビュー選択後、次のファイル
+		SHIFT+SPACE	疑似連動ビュー選択後、前のファイル
+		(C)		原寸表示
+		(X)		縮小
+		(Z)		拡大
+	(キャレットモード)
+		*		カーソル下単語ハイライト
+		Y		連動ビュートグル
+				Visual-mode中は範囲コピー
+		SHIFT+Y		行コピー
+		V		Visual-modeトグル
+		(1-4)		しおり1-4に移動
+		(SHIFT+1-4)	しおり1-4に登録
+	(ViLikeKeys)
 		(:)		コマンド一行編集
+		(CTRL+[)	検索ハイライト解除
 		(HJKL)		左上下右移動
-		(G)		ファイル頭に移動
+		(SHIFT+HJKL)	画面スクロール
+		(G)		オペレーターG
 		(SHIFT+G)	ファイル末に移動
-		(CTRL+G)	行ジャンプ
 		(N)		次の検索候補
 		(SHIFT+N)	前の検索候補
+	(Gオペレータ)
+		(1-9)		カウンタ
+		(HJKL)		左上下右移動
+		(SHIFT+HJKL)	画面スクロール
+		(A)		行頭へ移動
+		(E)		行末へ移動
+		(F)		カーソル下にあるURIをPPvで開く
+		(G)		ファイル頭へ移動
+				カウンタが1以上のときは行ジャンプ
+		(S)		カーソル下にあるURIを選択
+		(X)		カーソル下にあるURLをブラウザで開く
+		(:)		最後に一行編集で実行したコマンドを再実行
+		(I)		直近の範囲を選択
+		(A)		直近の範囲を区切りを含めて選択
+		(W)		単語選択
+		(SHIFT+W)	スペースで区切られた範囲を選択
+		("'`,{[(<)	記号切られた範囲を選択
+
+===============================================================================
+workerPPv.stay.js
+インスタンス番号:80120
+
+KV_main:FIRSTEVENTから実行され、PPvのIDごとに常駐します。
+起動時に%sp'workerPPv'を設定します。
+
+関数の説明
+ppx_resume(dodge, tmod?, xwin?, winpos?, debugMode = '') => void
+ workerPPv.stay.jsの再実行時に実行されます
+ 1-4までの引数はLaunchPPv.js,getSyntaxDocument.jsがスクリプト内で設定します
+	@arg 0 {string} 1を設定したときPPvがカーソルを左右に避けます
+	@arg 1 {string} 起動前のXV_tmodの値が指定されます
+	@arg 2 {string} 起動前のXwin:Vの値が指定されます
+	@arg 3 {string} 起動前の_WinPos:<ID>の値が指定されます
+	@arg 4 {string} "DEBUG"が指定されたときデバッグメッセージを表示します
+
+ppx_GetValue(key: CacheKeys) => string|boolean
+ CacheKeysの値を返します
+
+ppx_Dodge() => void
+ Dodge-PPvを実行します
+
+ppx_ToggleDodge() => void
+ Dodge-PPvの有効無効を切り替え、メッセージを表示します
+
+ppx_ToggleWrap() => void
+ wrap状態の有効無効を切り替え、メッセージを表示します
+
+ppx_ToggleTopmost() => void
+ topmostの有効無効を切り替え、メッセージを表示します
+
+ppx_SyntaxUpdate(batOption: string) => void
+ 表示中のファイルにBatの構文ハイライトを適用します
+ \F5更新時にgetSyntaxDocument.jsにより実行されます
+	@arg 0 {string} Batのオプションを指定できます
+
+ppx_Close(syncOff: string): void
+ PPvの終了時にKV_main:CLOSEEVENTにより実行されます
+ PPvのオプション、連動ビュー表示前の位置情報の復元をします
+	@arg 0 {string} "0"以外のとき、PPv終了時に連動ビューを解除します
+
+型情報
+
+type CacheKeys = {
+	debugMode: string;
+	idName: string;
+	tmod: string;
+	winpos: string;
+	xwin: string;
+	viewtype: string;
+	codepace: string;
+	esc: boolean;
+	mine: boolean;
+	tab: boolean;
+	animate: boolean;
+	colorprofile: boolean;
+	hasWrap: boolean;
+	hasTopmost: boolean;
+}
+
+===============================================================================
+
+vim:tw=79:ts=8:sts=0:sw=4:norl:noet:fen:

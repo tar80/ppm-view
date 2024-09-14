@@ -1,0 +1,27 @@
+{
+  "name": "@ppmdev/ppm-view",
+  "version": "1.6.0",
+  "description": "Enhances the functionality of PPv",
+  "main": "index.js",
+  "directories": { "doc": "doc" },
+  "devDependencies": {},
+  "type": "module",
+  "scripts": {
+    "ts": "tsc --noEmit true --skipLibCheck true",
+    "deno": "deno run --no-check --allow-all --unstable",
+    "build": "ppmbuild",
+    "build:prod": "set NODE_ENV=Production&&ppmbuild -- src",
+    "ppmver": "ppmversion",
+    "test": "jest"
+  },
+  "jest": {
+    "verbose": true,
+    "coverageProvider": "v8",
+    "preset": "ts-jest",
+    "roots": ["<rootDir>/src"],
+    "testEnvironment": "node",
+    "testMatch": ["**/__tests__/**/*.ts", "**/?(*.)+test.ts"]
+  },
+  "author": "tar80 <tar80master@gmail.com> (https://tar80.github.io/pages-pca/)",
+  "license": "MIT"
+}
