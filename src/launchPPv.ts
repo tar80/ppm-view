@@ -4,11 +4,11 @@
  * @arg 2 {number} - Specify the value of the X_vpos
  * @arg 3 {number} - If non-zero, activate dodge(Move left and right to avoid the cursor)
  * @arg 4 {number} - If 1 is specified, uses bat. If 2 is specified, forces bat usage even if file encoding detection fails.
+ *                   8 forces UTF8 assumption. 16 forces UTF16LE assumption.
  * @arg 5 {string} - Specify Bat additional options. Fixed options are "--color=always --style=changes --wrap-never -l <filetype>"
  * @arg 6 {string} - Displays debug messages when "DEBUG" is specified
  */
 
-import '@ppmdev/polyfills/arrayIndexOf.ts';
 import {safeArgs} from '@ppmdev/modules/argument.ts';
 import {tmp, useLanguage} from '@ppmdev/modules/data.ts';
 import debug from '@ppmdev/modules/debug.ts';
@@ -88,7 +88,15 @@ const main = (): void => {
         } else if (useBat === '0' || isEmptyStr(fileType)) {
           cmdline = core.composeCmdline(ppvid, path);
         } else {
-          const [fileEnc, filterCmd] = core.buildBatCommandWithNkf(fileName, fileType, batOpts);
+          let codepage: string | undefined;
+
+          if (useBat === '8') {
+            codepage = 'UTF8';
+          } else if (useBat === '16') {
+            codepage = 'UNICODE';
+          }
+
+          const [fileEnc, filterCmd] = core.buildBatCommandWithNkf(fileName, fileType, batOpts, codepage);
           const opts: string[] = [fileEnc, `-document:"%(${filterCmd}%)"`];
           cmdline = core.composeCmdline(ppvid, path, opts);
 

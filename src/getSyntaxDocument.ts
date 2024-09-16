@@ -4,7 +4,6 @@
  * @arg 2 {string} - Specify Bat additional options. Fixed options are "--color=always --style=changes --wrap-never -l <filetype>"
  */
 
-import '@ppmdev/polyfills/arrayIndexOf.ts';
 import {safeArgs} from '@ppmdev/modules/argument.ts';
 import {tmp, useLanguage} from '@ppmdev/modules/data.ts';
 import debug from '@ppmdev/modules/debug.ts';

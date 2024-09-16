@@ -1,6 +1,6 @@
 {
   "name": "@ppmdev/ppm-view",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Enhances the functionality of PPv",
   "main": "index.js",
   "directories": { "doc": "doc" },
