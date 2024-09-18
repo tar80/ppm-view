@@ -3,6 +3,7 @@
  * @return - the word under the cursor
  */
 
+import {validArgs} from '@ppmdev/modules/argument.ts';
 import {useLanguage} from '@ppmdev/modules/data.ts';
 import {extractWord, isPPv} from './mod/core.ts';
 import {langExtractCursorWord} from './mod/language.ts';
@@ -12,7 +13,7 @@ import {langExtractCursorWord} from './mod/language.ts';
 const lang = langExtractCursorWord[useLanguage()];
 
 const main = (): string => {
-  const register = PPx.Arguments.Item(-1);
+  const [register] = validArgs();
 
   if (PPx.Extract('%*getcust(XV_tmod)') !== '1') {
     PPx.linemessage(lang.noCaret);

@@ -11,6 +11,7 @@ import {isEmptyStr, isZero} from '@ppmdev/modules/guard.ts';
 import {pathSelf} from '@ppmdev/modules/path.ts';
 import {getStaymodeId} from '@ppmdev/modules/staymode.ts';
 import {RESTORE_SCRIPT_NAME, STAYMODE_ID, SYNTAX_SCRIPT_NAME, WORKER_NAME, debugMsg, isPPv} from './mod/core.ts';
+import { validArgs } from '@ppmdev/modules/argument.ts';
 
 !isPPv && PPx.Quit(-1);
 
@@ -34,7 +35,7 @@ type Cache = {
 const cache = {idName: PPx.WindowIDName.slice(-1)} as Cache;
 
 const main = (): void => {
-  const [dodge, tmod, xwin, winpos, debugMode] = PPx.Arguments.Item(-1).split(',');
+  const [dodge, tmod, xwin, winpos, debugMode] = validArgs();
   const staymodeId = getStaymodeId(WORKER_NAME) || STAYMODE_ID;
 
   PPx.StayMode = staymodeId;
