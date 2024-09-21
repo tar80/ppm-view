@@ -1,26 +1,11 @@
-import {isEmptyStr, isZero} from '@ppmdev/modules/guard.ts';
+import {isEmptyStr} from '@ppmdev/modules/guard.ts';
 import {ppvMediaType} from '@ppmdev/modules/meta.ts';
 import {runStdout} from '@ppmdev/modules/run.ts';
 
 export const STAYMODE_ID = 80120;
 export const WORKER_NAME = 'workerPPv';
 export const WORKER_FILENAME = `${WORKER_NAME}.stay.js`;
-export const RESTORE_SCRIPT_NAME = 'lazyRestore.js';
 export const SYNTAX_SCRIPT_NAME = 'getSyntaxDocument.js';
-
-export const isPPv = (): boolean => PPx.Extract('%n').indexOf('V') === 0;
-
-const ppvExists = (id: string): [boolean, string] => {
-  const hasID = !isZero(id);
-
-  if (!hasID) {
-    id = '';
-  } else if (!isEmptyStr(PPx.Extract(`%NV${id}`))) {
-    return [true, id];
-  }
-
-  return [false, id];
-};
 
 const composeCmdline = (id: string, path: string, opts: string[] = []): string => {
   const bootid = id !== '0' ? `-r -bootid:${id.slice(-1)}` : '-r';

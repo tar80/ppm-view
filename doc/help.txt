@@ -41,7 +41,6 @@ PPvの閲覧・操作を強化します。
 	dist\findWord.js		*find強化版
 	dist\getSyntaxDocument		構文ハイライトの適用
 	dist\launchPPv.js		PPvを起動
-	dist\lazyRestore.js		連動ビュー終了後の遅延後処理
 	dist\openArchDoc.js		書庫内ドキュメントを列挙
 	dist\selectText.js		指定した範囲の文字列を選択
 	dist\syncView.js		連動ビューを制御
@@ -143,9 +142,9 @@ ppx_resume(dodge, tmod?, xwin?, winpos?, debugMode = '') => void
  workerPPv.stay.jsの再実行時に実行されます
  1-4までの引数はLaunchPPv.js,getSyntaxDocument.jsがスクリプト内で設定します
 	@arg 0 {string} 1を設定したときPPvがカーソルを左右に避けます
-	@arg 1 {string} 起動前のXV_tmodの値が指定されます
-	@arg 2 {string} 起動前のXwin:Vの値が指定されます
-	@arg 3 {string} 起動前の_WinPos:<ID>の値が指定されます
+	@arg 1 {string} 起動前のXV_tmodの値を指定
+	@arg 2 {string} 起動前のXwin:Vの値を指定
+	@arg 3 {string} 起動前の_WinPos:<ID>の値を指定
 	@arg 4 {string} "DEBUG"が指定されたときデバッグメッセージを表示します
 
 ppx_GetValue(key: CacheKeys) => string|boolean
@@ -170,7 +169,7 @@ ppx_SyntaxUpdate(batOption: string) => void
 
 ppx_Close(syncOff: string): void
  PPvの終了時にKV_main:CLOSEEVENTにより実行されます
- PPvのオプション、連動ビュー表示前の位置情報の復元をします
+ 連動ビュー表示前のタイトルバー、位置情報を復元をします
 	@arg 0 {string} "0"以外のとき、PPv終了時に連動ビューを解除します
 
 型情報
@@ -181,6 +180,8 @@ type CacheKeys = {
 	tmod: string;
 	winpos: string;
 	xwin: string;
+	hasWrap: boolean;
+	hasTopmost: boolean;
 	viewtype: string;
 	codepace: string;
 	esc: boolean;
@@ -188,8 +189,6 @@ type CacheKeys = {
 	tab: boolean;
 	animate: boolean;
 	colorprofile: boolean;
-	hasWrap: boolean;
-	hasTopmost: boolean;
 }
 
 ===============================================================================

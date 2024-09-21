@@ -4,9 +4,10 @@
  */
 
 import {safeArgs} from '@ppmdev/modules/argument.ts';
-import {isPPv, caretMatchWord, extractWord} from './mod/core.ts';
+import {withinPPv} from '@ppmdev/modules/ppv.ts';
+import {caretMatchWord, extractWord} from './mod/core.ts';
 
-!isPPv && PPx.Quit(-1);
+!withinPPv() && PPx.Quit(-1);
 
 const main = (): void => {
   const [isPrev, isFollow] = safeArgs(false, false);

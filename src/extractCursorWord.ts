@@ -5,10 +5,11 @@
 
 import {validArgs} from '@ppmdev/modules/argument.ts';
 import {useLanguage} from '@ppmdev/modules/data.ts';
-import {extractWord, isPPv} from './mod/core.ts';
+import {withinPPv} from '@ppmdev/modules/ppv.ts';
+import {extractWord} from './mod/core.ts';
 import {langExtractCursorWord} from './mod/language.ts';
 
-!isPPv && PPx.Quit(-1);
+!withinPPv() && PPx.Quit(-1);
 
 const lang = langExtractCursorWord[useLanguage()];
 

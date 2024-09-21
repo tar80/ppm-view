@@ -3,9 +3,10 @@
  */
 
 import {safeArgs} from '@ppmdev/modules/argument.ts';
-import {caretInlineMatch, caretMatchWord, isPPv, selectionAt} from './mod/core.ts';
+import {withinPPv} from '@ppmdev/modules/ppv.ts';
+import {caretInlineMatch, caretMatchWord, selectionAt} from './mod/core.ts';
 
-!isPPv && PPx.Quit(-1);
+!withinPPv() && PPx.Quit(-1);
 
 const main = (): void => {
   const [isPrev] = safeArgs(false);
@@ -23,7 +24,7 @@ const main = (): void => {
   if (matchIdx > 0) {
     caretInlineMatch(matchIdx, isPrev);
   } else if (sendSearchKey(isPrev)) {
-    PPx.Execute('%K"@HOME"')
+    PPx.Execute('%K"@HOME"');
     caretMatchWord(word, isPrev);
   }
 };

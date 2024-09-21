@@ -5,9 +5,10 @@
 
 import {validArgs} from '@ppmdev/modules/argument.ts';
 import {isZero} from '@ppmdev/modules/guard.ts';
-import {isPPv, selectionAt} from './mod/core.ts';
+import {withinPPv} from '@ppmdev/modules/ppv.ts';
+import {selectionAt} from './mod/core.ts';
 
-!isPPv && PPx.Quit(-1);
+!withinPPv() && PPx.Quit(-1);
 
 const main = (): string => {
   const [cmd] = validArgs();

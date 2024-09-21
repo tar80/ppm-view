@@ -7,55 +7,61 @@
  * @return - A file name;
  */
 
+import {validArgs} from '@ppmdev/modules/argument.ts';
 import {isEmptyStr, isZero} from '@ppmdev/modules/guard.ts';
-import {pathSelf} from '@ppmdev/modules/path.ts';
+import {withinPPv} from '@ppmdev/modules/ppv.ts';
 import {getStaymodeId} from '@ppmdev/modules/staymode.ts';
-import {RESTORE_SCRIPT_NAME, STAYMODE_ID, SYNTAX_SCRIPT_NAME, WORKER_NAME, debugMsg, isPPv} from './mod/core.ts';
-import { validArgs } from '@ppmdev/modules/argument.ts';
+import type {Letters} from '@ppmdev/modules/types.ts';
+import {STAYMODE_ID, SYNTAX_SCRIPT_NAME, WORKER_NAME, debugMsg} from './mod/core.ts';
 
-!isPPv && PPx.Quit(-1);
+!withinPPv && PPx.Quit(-1);
 
 const CURSOR_MARGIN = 50;
 const EVENT_LABEL = 'ppmview_worker';
-const dispWidth = Number(PPx.Extract('%*getcust(S_ppm#global:disp_width)'));
-const dispHalf = dispWidth / 2 - CURSOR_MARGIN;
+const RESTORE_SCRIPT_NAME = 'restorePPv.js';
 
+type ViewoptionKey = keyof ViewOptions;
 type ViewOptions = {viewtype: string; codepage: string; esc: boolean; mime: boolean; tag: boolean; animate: boolean; colorprofile: boolean};
 type RestoreOptionKey = keyof RestoreOptions;
 type RestoreOptions = {tmod: string; winpos: string; xwin: string};
 type CacheKeys = keyof Cache;
 type Cache = {
   debugMode: string;
-  idName: string;
+  idName: Letters;
   dodge: boolean;
   hasWrap: boolean;
   hasTopmost: boolean;
 } & ViewOptions &
   RestoreOptions;
 const cache = {idName: PPx.WindowIDName.slice(-1)} as Cache;
+const staymodeId = getStaymodeId(WORKER_NAME) || STAYMODE_ID;
+PPx.setProcessValue(WORKER_NAME, staymodeId);
+PPx.StayMode = staymodeId;
 
 const main = (): void => {
   const [dodge, tmod, xwin, winpos, debugMode] = validArgs();
-  const staymodeId = getStaymodeId(WORKER_NAME) || STAYMODE_ID;
-
-  PPx.StayMode = staymodeId;
-  PPx.setProcessValue(WORKER_NAME, staymodeId);
-  cacheOptions();
   ppx_resume(dodge, tmod, xwin, winpos, debugMode);
 };
 
 const ppx_resume = (dodge: string, tmod?: string, xwin?: string, winpos?: string, debugMode = ''): void => {
-  cache.dodge = dodge === '1';
   cache.debugMode = debugMode;
-  updateValue('tmod', tmod);
-  updateValue('xwin', xwin);
-  updateValue('winpos', winpos);
-  setSelectEvent();
+  updateCacheValue('tmod', tmod);
+  updateCacheValue('xwin', xwin);
+  updateCacheValue('winpos', winpos);
   debugMsg(cache.debugMode, `ppx_resume dodge:${dodge},tmod:${cache.tmod},xwin:${cache.xwin},winpos:${cache.winpos}`);
-  ppx_Dodge();
+
+  if (!isEmptyStr(dodge)) {
+    cache.dodge = dodge === '1';
+    setSelectEvent();
+    ppx_Dodge();
+  }
 };
 
-const ppx_GetValue = (name: CacheKeys): string => String(cache[name]);
+const ppx_GetValue = (name: CacheKeys): string => {
+  cacheOptions();
+
+  return String(cache[name]);
+};
 
 const ppx_Dodge = (): void => {
   if (cache.dodge && PPx.Extract('%*ppxlist(+V)') === '1') {
@@ -69,6 +75,7 @@ const ppx_ToggleDodge = (): void => {
 };
 
 const ppx_ToggleWrap = (): void => {
+  cacheOptions();
   cache.hasWrap = !cache.hasWrap;
   const col = PPx.Extract('%L');
   const [width, message] = cache.hasWrap ? ['-1', 'wrap'] : ['0', 'no wrap'];
@@ -82,6 +89,8 @@ const ppx_ToggleTopmost = (): void => {
 };
 
 const ppx_SyntaxUpdate = (batOption = ''): void => {
+  cacheOptions();
+
   if (cache.viewtype === 'TEXT' || cache.viewtype === 'DOCUMENT') {
     const parent = PPx.Extract(`%*script("%sgu'ppmlib'\\expandSource.js",ppm-view,path)`);
 
@@ -94,17 +103,18 @@ const ppx_SyntaxUpdate = (batOption = ''): void => {
 };
 
 const ppx_Close = (syncOff: string): void => {
-  const hasRestore = cache.tmod || cache.xwin || cache.winpos;
   cache.dodge && PPx.Execute(`*linecust ${EVENT_LABEL},KC_main:SELECTEVENT,`);
   cache.tmod && PPx.Execute(`*setcust XV_tmod=${cache.tmod}`);
+  cache.xwin && PPx.Execute(`*setcust X_win:V=${cache.xwin}`);
 
-  if (hasRestore) {
-    const {parentDir} = pathSelf();
-    PPx.Execute(
-      '*run -nostartmsg -hide -breakjob -noppb ' +
-        `%0ppbw.exe -c *script ${parentDir}\\${RESTORE_SCRIPT_NAME},${cache.idName},"${cache.winpos}","${cache.xwin}","$${cache.debugMode}"`
-    );
-  } else if (!isZero(syncOff)) {
+  if (cache.winpos) {
+    const path = `%sgu'ppmlib'\\${RESTORE_SCRIPT_NAME}`;
+    const launchOpts = '-nostartmsg -hide -noppb';
+    const cmdline = `*script ${path},"${cache.idName}","${cache.winpos}","${cache.debugMode}"`;
+    PPx.Execute(`%Oq *launch ${launchOpts} %0ppbw.exe -c ${cmdline}`);
+  }
+
+  if (!isZero(syncOff)) {
     PPx.Execute(`*execute C,*js "if(PPx.SyncView>0){PPx.SyncView=0;};"`);
   }
 
@@ -117,38 +127,47 @@ const ppx_finally = (): void => {
   debugMsg(cache.debugMode, 'ppx_finally workerPPv');
 };
 
-const updateValue = (key: RestoreOptionKey, value?: string): void => {
+const updateCacheValue = (key: RestoreOptionKey, value?: string): void => {
   if (value && !isEmptyStr(value)) {
     cache[key] = value;
   }
 };
 
+let _fileName = '';
 const cacheOptions = (): void => {
-  const rgx = /^.*-(HEX|TEXT|DOCUMENT|IMAGE|RAWIMAGE).*$/;
-  const viewoption = PPx.Extract('%*viewoption');
-  cache.viewtype = viewoption.replace(rgx, '$1');
-  cache.codepage = viewoption.split(' ', 2)[1]?.slice(1);
-  cache.esc = isZero(viewoption.indexOf('-esc:1'));
-  cache.mime = isZero(viewoption.indexOf('-mime:1'));
-  cache.tag = isZero(viewoption.indexOf('-tag:1'));
-  cache.animate = isZero(viewoption.indexOf('-animate:'));
-  cache.colorprofile = isZero(viewoption.indexOf('-colorprofile:'));
+  if (_fileName !== PPx.Extract('%R')) {
+    const rgx = /^.*-(HEX|TEXT|DOCUMENT|IMAGE|RAWIMAGE|PRINTS).*$/;
+    const viewoption = PPx.Extract('%*viewoption');
+    cache.viewtype = viewoption.replace(rgx, '$1');
+    cache.codepage = viewoption.split(' ', 2)[1]?.slice(1);
+    cache.esc = isZero(viewoption.indexOf('-esc:1'));
+    cache.mime = isZero(viewoption.indexOf('-mime:1'));
+    cache.tag = isZero(viewoption.indexOf('-tag:1'));
+    cache.animate = isZero(viewoption.indexOf('-animate:'));
+    cache.colorprofile = isZero(viewoption.indexOf('-colorprofile:'));
+  }
 };
 
+let _hasEvent = false;
 const setSelectEvent = (show?: boolean): void => {
   const selectevent = `*linecust ${EVENT_LABEL},KC_main:SELECTEVENT`;
   let message: string;
 
-  if (cache.dodge) {
+  if (!_hasEvent && cache.dodge) {
     PPx.Execute(`${selectevent},%(*execute V,*if %(0%*stayinfo(%sp'${WORKER_NAME}')%:*js ":${STAYMODE_ID},ppx_Dodge"%)%)`);
     message = 'dodge';
+    _hasEvent = true;
   } else {
     PPx.Execute(`${selectevent},`);
     message = 'no dodge';
+    _hasEvent = false;
   }
 
   show && PPx.linemessage(message);
 };
+
+const dispWidth = Number(PPx.Extract('%*getcust(S_ppm#global:disp_width)'));
+const dispHalf = dispWidth / 2 - CURSOR_MARGIN;
 
 const horPos = (): number => {
   const ppvWidth = Number(PPx.Extract('%*windowrect(,w)'));

@@ -42,7 +42,7 @@ const main = (): void => {
       break;
     case 21:
       cwd = cwd.replace(/^ftp/, 'http');
-      activatePPv(vpos, dodge, core.composeCmdline(ppvid, `${cwd}/${fileName}`), lazyLoad, debugMode);
+      activatePPv(ppvid, vpos, dodge, core.composeCmdline(ppvid, `${cwd}/${fileName}`), lazyLoad, debugMode);
       break;
     case 62:
     case 63:
@@ -101,11 +101,11 @@ const main = (): void => {
           cmdline = core.composeCmdline(ppvid, path, opts);
 
           if (useBat === '2' && isEmptyStr(fileEnc)) {
-            lazyLoad = `%%:*js ":%%sp'${WORKER_NAME}',ppx_SyntaxUpdate",${batOpts}`;
+            lazyLoad = `*js ":%sp'${WORKER_NAME}',ppx_SyntaxUpdate",${batOpts}`;
           }
         }
 
-        activatePPv(vpos, dodge, cmdline, lazyLoad, debugMode);
+        activatePPv(ppvid, vpos, dodge, cmdline, lazyLoad, debugMode);
       }
     }
   }
@@ -113,16 +113,25 @@ const main = (): void => {
 
 const statusMessage = (msg: string): void => PPx.linemessage(`!"${msg}`);
 
-const activatePPv = (newPos: string, dodge: string, cmdline: string, lazyLoad: string, debugMode: string): void => {
+const activatePPv = (ppvid: string, vpos: string, dodge: string, cmdline: string, lazyLoad: string, debugMode: string): void => {
   const {parentDir} = pathSelf();
-  const savePos = PPx.Extract('%*getcust(X_vpos)');
-  const hasChangePos = savePos !== newPos;
-  // Run dodge-PPv only when X_vpos is 0
-  dodge = isZero(newPos) ? dodge : '0';
+  const hasChangePos = !isZero(vpos);
+  const postCmdline = [];
+  let winpos = '';
 
-  hasChangePos && PPx.Execute(`*customize X_vpos=${newPos}`);
-  PPx.Execute(`*ppv ${cmdline} -k *script ${parentDir}\\${WORKER_FILENAME},${dodge},${debugMode}${lazyLoad}`);
-  hasChangePos && PPx.Execute(`*setcust X_vpos=${savePos}`);
+  if (hasChangePos) {
+    // Run dodge-PPv only when X_vpos is 0
+    dodge = '0';
+    winpos = PPx.Extract(`%*getcust(_WinPos:V${ppvid})`);
+    const savePos = PPx.Extract('%*getcust(X_vpos)');
+    postCmdline.push(`*setcust X_vpos=${savePos}`);
+    PPx.Execute(`*setcust X_vpos=${vpos}`);
+  }
+
+  postCmdline.push(`*script ${parentDir}\\${WORKER_FILENAME},${dodge},,,"${winpos}",${debugMode}`);
+  postCmdline.push(lazyLoad);
+
+  PPx.Execute(`*ppv ${cmdline} -k %(${postCmdline.join('%:')}%)`);
 };
 
 main();
