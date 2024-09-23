@@ -23,7 +23,7 @@ const lang = langLaunchPPv[useLanguage()];
 const main = (): void => {
   const [ppvid, typeSpec, vpos, dodge, useBat, batOpts, debugMode] = safeArgs('0', '0', '0', '0', '0', '', '');
   const fileName = PPx.Extract('%R');
-  const fileExt = PPx.Extract('%t') || fileName;
+  const fileExt = PPx.Extract('%t');
   let cwd = PPx.Extract('%FDN');
   let lazyLoad = '';
 
