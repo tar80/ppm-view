@@ -1,7 +1,7 @@
 ﻿PPM_PLUGIN_NAME=ppm-view
 
 #Plugin version
-VERSION=1.6.7
+VERSION=1.6.8
 
 #Requires ppm version
 PPM_VERSION=0.95

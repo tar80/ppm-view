@@ -20,7 +20,6 @@ const CURSOR_MARGIN = 50;
 const EVENT_LABEL = 'ppmview_worker';
 const RESTORE_SCRIPT_NAME = 'restorePPv.js';
 
-type ViewoptionKey = keyof ViewOptions;
 type ViewOptions = {viewtype: string; codepage: string; esc: boolean; mime: boolean; tag: boolean; animate: boolean; colorprofile: boolean};
 type RestoreOptionKey = keyof RestoreOptions;
 type RestoreOptions = {tmod: string; winpos: string; xwin: string};
@@ -44,6 +43,7 @@ const main = (): void => {
 };
 
 const ppx_resume = (dodge: string, tmod?: string, xwin?: string, winpos?: string, debugMode = ''): void => {
+  cacheOptions();
   cache.debugMode = debugMode;
   updateCacheValue('tmod', tmod);
   updateCacheValue('xwin', xwin);
@@ -57,11 +57,7 @@ const ppx_resume = (dodge: string, tmod?: string, xwin?: string, winpos?: string
   }
 };
 
-const ppx_GetValue = (name: CacheKeys): string => {
-  cacheOptions();
-
-  return String(cache[name]);
-};
+const ppx_GetValue = (name: CacheKeys): string => String(cache[name]);
 
 const ppx_Dodge = (): void => {
   if (cache.dodge && PPx.Extract('%*ppxlist(+V)') === '1') {
@@ -75,7 +71,6 @@ const ppx_ToggleDodge = (): void => {
 };
 
 const ppx_ToggleWrap = (): void => {
-  cacheOptions();
   cache.hasWrap = !cache.hasWrap;
   const col = PPx.Extract('%L');
   const [width, message] = cache.hasWrap ? ['-1', 'wrap'] : ['0', 'no wrap'];
@@ -89,8 +84,6 @@ const ppx_ToggleTopmost = (): void => {
 };
 
 const ppx_SyntaxUpdate = (batOption = ''): void => {
-  cacheOptions();
-
   if (cache.viewtype === 'TEXT' || cache.viewtype === 'DOCUMENT') {
     const parent = PPx.Extract(`%*script("%sgu'ppmlib'\\expandSource.js",ppm-view,path)`);
 

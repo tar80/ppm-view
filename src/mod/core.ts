@@ -47,8 +47,8 @@ const buildBatCommandWithNkf = (fileName: string, fileType: string, userOptions:
   const batCmd = `bat ${FIXED_OPTIONS} ${userOptions}`;
   const output = "%si'TempFile' 2>&1";
   const optFileType = !isEmptyStr(fileType) ? ` -l ${fileType}` : '';
-  const guessEnc = runStdout({hide: true, trim: true, cmdline: `nkf -g ${fileName}`})[1];
-  const batOutput = `${preOpt} ${batCmd}${optFileType} ${fileName} >${output}`;
+  const guessEnc = runStdout({hide: true, trim: true, cmdline: `nkf -g "${fileName}"`})[1];
+  const batOutput = `${preOpt} ${batCmd}${optFileType} "${fileName}" >${output}`;
   const convUtf16 = `${preOpt} nkf -W16L -w16L "${fileName}" | ${batCmd}${optFileType} >${output}`;
   const convGuess = `${preOpt} nkf --ic=${guessEnc} -w "${fileName}" | ${batCmd} ${optFileType} >${output}`;
   const isNonText = guessEnc === 'ASCII' || guessEnc === 'BINARY';
@@ -81,7 +81,6 @@ const buildBatCommandWithNkf = (fileName: string, fileType: string, userOptions:
 export const selectionAt = (): {col: number; forward: string; backward: string} => {
   const col = Number(PPx.Extract('%lH')) - 1;
   const selectText = PPx.Extract('%*selecttext()').replace(/\t/g, ' ');
-
   const forward = selectText.slice(0, col);
   const backward = selectText.slice(col);
 
