@@ -57,7 +57,11 @@ const ppx_resume = (dodge: string, tmod?: string, xwin?: string, winpos?: string
   }
 };
 
-const ppx_GetValue = (name: CacheKeys): string => String(cache[name]);
+const ppx_GetValue = (name: CacheKeys): string => {
+  cacheOptions();
+
+  return String(cache[name]);
+};
 
 const ppx_Dodge = (): void => {
   if (cache.dodge && PPx.Extract('%*ppxlist(+V)') === '1') {
@@ -71,6 +75,7 @@ const ppx_ToggleDodge = (): void => {
 };
 
 const ppx_ToggleWrap = (): void => {
+  cacheOptions();
   cache.hasWrap = !cache.hasWrap;
   const col = PPx.Extract('%L');
   const [width, message] = cache.hasWrap ? ['-1', 'wrap'] : ['0', 'no wrap'];
@@ -147,7 +152,7 @@ const setSelectEvent = (show?: boolean): void => {
   let message: string;
 
   if (!_hasEvent && cache.dodge) {
-    PPx.Execute(`${selectevent},%(*execute V,*if %(0%*stayinfo(%sp'${WORKER_NAME}')%:*js ":${STAYMODE_ID},ppx_Dodge"%)%)`);
+    PPx.Execute(`${selectevent},%(*execute V,*if %(0%*stayinfo(${staymodeId})%:*js ":${staymodeId},ppx_Dodge"%)%)`);
     message = 'dodge';
     _hasEvent = true;
   } else {

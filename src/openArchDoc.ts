@@ -88,7 +88,6 @@ const main = () => {
     autoselect: true,
     k: `*completelist -list -match:${matchOpt} -module:off -detail:"user1" -file:"${COMP_LIST_PATH}"`
   });
-  ppm.deletekeys();
 
   if (errorlevel !== 0) {
     return;
