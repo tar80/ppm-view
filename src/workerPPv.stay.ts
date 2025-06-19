@@ -75,7 +75,10 @@ const ppx_ToggleDodge = (): void => {
 };
 
 const ppx_ToggleWrap = (): void => {
-  cacheOptions();
+  if (!cache.codepage) {
+    cacheOptions();
+  }
+
   cache.hasWrap = !cache.hasWrap;
   const col = PPx.Extract('%L');
   const [width, message] = cache.hasWrap ? ['-1', 'wrap'] : ['0', 'no wrap'];

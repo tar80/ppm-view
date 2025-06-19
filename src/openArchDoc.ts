@@ -86,7 +86,7 @@ const main = () => {
     mode: 'e',
     leavecancel: false,
     autoselect: true,
-    k: `*completelist -list -match:${matchOpt} -module:off -detail:"user1" -file:"${COMP_LIST_PATH}"`
+    k: `*completelist -match:${matchOpt} -module:off -detail:"user1" -file:"${COMP_LIST_PATH}"`
   });
 
   if (errorlevel !== 0) {
