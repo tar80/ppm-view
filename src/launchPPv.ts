@@ -57,7 +57,7 @@ const main = (): void => {
 
       if (!fso.FileExists(`${cwd}\\${fileName}`)) {
         // wait untill *unpack command is finished
-        PPx.Extract(`*unpack ${cwd}%&`);
+        PPx.Execute(`*unpack ${cwd}`);
       }
 
     default: {

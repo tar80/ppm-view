@@ -23,7 +23,10 @@ export const susieExtensions = (): string[] => {
 type MediaKeys = keyof typeof ppvMediaType;
 type MediaType = (typeof ppvMediaType)[MediaKeys];
 const expandExt = <FileType extends string>(path: string, fileExt: FileType): [FileType, MediaType] => {
-  const validExt = PPx.GetFileInformation(path);
+  let validExt = PPx.GetFileInformation(path);
+  if (!validExt) {
+    validExt = `:${fileExt.toUpperCase()}`
+  }
   let mediaType = ppvMediaType[validExt as MediaKeys];
 
   if (mediaType === 'javascript' || mediaType === 'perl' || mediaType === 'cmd' || mediaType === 'json') {
