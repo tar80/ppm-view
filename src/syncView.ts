@@ -38,7 +38,7 @@ const syncView = (isPageMode: boolean, xwinSpec: string, dodge: string, hasPair:
   if (isPageMode) {
     const tmod_ = PPx.Extract('%*getcust(XV_tmod)');
 
-    if (!isZero(tmod)) {
+    if (!isZero(tmod_)) {
       PPx.Execute('*setcust XV_tmod=0');
       tmod = tmod_;
     }
