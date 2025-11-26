@@ -58,7 +58,8 @@ const syncView = (isPageMode: boolean, xwinSpec: string, dodge: string, hasPair:
 
     const cmdSyncId = `*ppvoption sync ${idName}`;
     const cmdTopmost = `*topmostwindow %NV${idName}`;
-    PPx.Execute(`${cmdSyncId}%:${cmdTopmost}%:*wait 0,2%:*focus %n`);
+    PPx.Execute(`*focus %n%:${cmdSyncId}%:${cmdTopmost}`);
+    // PPx.Execute(`${cmdSyncId}%:${cmdTopmost}%:*wait 300,2%:*focus %n`);
   }
 
   PPx.Execute(`*execute V${idName},*script ${parentDir}\\${WORKER_FILENAME},${dodge},${tmod},${xwin},"${winpos}",${debugMode}`);
